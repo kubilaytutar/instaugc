@@ -13,7 +13,21 @@
       "Bash(git add:*)",
       "Bash(git remote:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(openssl rand:*)",
+      "Bash(railway whoami:*)",
+      "Bash(RAILWAY_TOKEN=04b28c12-c88c-434c-a8f9-209d776f59fc railway whoami)",
+      "Bash(RAILWAY_TOKEN=04b28c12-c88c-434c-a8f9-209d776f59fc railway projects)",
+      "Bash(RAILWAY_TOKEN=04b28c12-c88c-434c-a8f9-209d776f59fc railway project)",
+      "Bash(RAILWAY_TOKEN=04b28c12-c88c-434c-a8f9-209d776f59fc railway project list)",
+      "Bash(curl -s -X POST https://backboard.railway.app/graphql/v2 -H \"Authorization: Bearer 04b28c12-c88c-434c-a8f9-209d776f59fc\" -H \"Content-Type: application/json\" -d '{\"\"query\"\":\"\"{ me { name email } }\"\"}')",
+      "Bash(curl -s -X POST https://backboard.railway.com/graphql/v2 -H \"Authorization: Bearer 04b28c12-c88c-434c-a8f9-209d776f59fc\" -H \"Content-Type: application/json\" -d '{\"\"query\"\":\"\"{ me { name email } }\"\"}')",
+      "Bash(curl -s -X POST https://backboard.railway.app/graphql/v2 -H \"Authorization: Bearer 04b28c12-c88c-434c-a8f9-209d776f59fc\" -H \"Content-Type: application/json\" -H \"X-Railway-Agent: claude\" -d '{\"\"query\"\":\"\"{ projects { edges { node { id name } } } }\"\"}')",
+      "Bash(curl -s -X POST https://backboard.railway.app/graphql/v2 -H \"Authorization: Bearer 04b28c12-c88c-434c-a8f9-209d776f59fc\" -H \"Content-Type: application/json\" -d '{\"\"query\"\":\"\"{ project\\(id: \\\\\"\"bccd6a6f-1789-4fac-8efe-dc552e199370\\\\\"\"\\) { services { edges { node { id name } } } environments { edges { node { id name } } } } }\"\"}')",
+      "Bash(curl -s -X POST https://backboard.railway.app/graphql/v2 -H \"Authorization: Bearer 04b28c12-c88c-434c-a8f9-209d776f59fc\" -H \"Content-Type: application/json\" -d '{\"\"query\"\":\"\"mutation { volumeCreate\\(input: { projectId: \\\\\"\"bccd6a6f-1789-4fac-8efe-dc552e199370\\\\\"\", serviceId: \\\\\"\"a222d91b-da4d-47c2-89d3-5a1a84c5091f\\\\\"\", environmentId: \\\\\"\"fac5efdd-897d-4819-96d1-90a09b62b6be\\\\\"\", mountPath: \\\\\"\"/data\\\\\"\" }\\) { id name } }\"\"}')",
+      "Bash(RAILWAY_TOKEN=04b28c12-c88c-434c-a8f9-209d776f59fc railway link --project bccd6a6f-1789-4fac-8efe-dc552e199370)",
+      "Bash(curl -s -X POST https://backboard.railway.app/graphql/v2 -H \"Authorization: Bearer 04b28c12-c88c-434c-a8f9-209d776f59fc\" -H \"Content-Type: application/json\" -d '{\"\"query\"\":\"\"mutation { variableUpsert\\(input: { projectId: \\\\\"\"bccd6a6f-1789-4fac-8efe-dc552e199370\\\\\"\", environmentId: \\\\\"\"fac5efdd-897d-4819-96d1-90a09b62b6be\\\\\"\", serviceId: \\\\\"\"a222d91b-da4d-47c2-89d3-5a1a84c5091f\\\\\"\", name: \\\\\"\"ADMIN_PASSWORD\\\\\"\", value: \\\\\"\"Instapuan2024!\\\\\"\" }\\) }\"\"}')",
+      "Bash(curl -s -X POST https://backboard.railway.app/graphql/v2 -H \"Authorization: Bearer 04b28c12-c88c-434c-a8f9-209d776f59fc\" -H \"Content-Type: application/json\" --data-raw '{\"\"query\"\":\"\"mutation { variableUpsert\\(input: { projectId: \\\\\"\"bccd6a6f-1789-4fac-8efe-dc552e199370\\\\\"\", environmentId: \\\\\"\"fac5efdd-897d-4819-96d1-90a09b62b6be\\\\\"\", serviceId: \\\\\"\"a222d91b-da4d-47c2-89d3-5a1a84c5091f\\\\\"\", name: \\\\\"\"ADMIN_PASSWORD\\\\\"\", value: \\\\\"\"Instapuan2024\\\\\"\" }\\) }\"\"}')"
     ]
   }
 }
