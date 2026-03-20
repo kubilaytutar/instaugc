@@ -8,7 +8,9 @@
       "Bash(npx next:*)",
       "mcp__Claude_Preview__preview_start",
       "Bash(node -e \":*)",
-      "Bash(railway --version)"
+      "Bash(railway --version)",
+      "Bash(railway login:*)",
+      "Bash(git add:*)"
     ]
   }
 }
