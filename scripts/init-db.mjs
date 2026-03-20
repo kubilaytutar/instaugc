@@ -61,29 +61,35 @@ db.exec(`
   );
 `);
 
-// Admin kullanıcısı yoksa oluştur
-const existing = db.prepare("SELECT id FROM users WHERE role = 'admin' LIMIT 1").get();
-if (!existing) {
-  const adminPassword = process.env.ADMIN_PASSWORD || "admin123";
+// Kullanıcıları oluştur (yoksa)
+const { hashSync } = await import("bcryptjs");
 
-  // bcryptjs olmadan basit hash (production'da env ile override edilmeli)
-  // Basit bir bcrypt mock yerine doğrudan bcryptjs kullanıyoruz
-  const { hashSync } = await import("bcryptjs");
-  const passwordHash = hashSync(adminPassword, 10);
+const testUsers = [
+  { email: "admin@instapuan.com", password: "Admin123!", name: "Admin", role: "admin" },
+  { email: "juri1@instapuan.com", password: "Juri123!", name: "Jüri 1", role: "subadmin" },
+  { email: "juri2@instapuan.com", password: "Juri123!", name: "Jüri 2", role: "subadmin" },
+  { email: "creator1@instapuan.com", password: "Creator123!", name: "İçerik Üretici 1", role: "creator" },
+];
 
-  const id = randomBytes(12).toString("hex");
-  const now = Date.now();
+const insertUser = db.prepare(`
+  INSERT OR IGNORE INTO users (id, email, password_hash, name, role, created_at, updated_at)
+  VALUES (?, ?, ?, ?, ?, ?, ?)
+`);
 
-  db.prepare(`
-    INSERT INTO users (id, email, password_hash, name, role, created_at, updated_at)
-    VALUES (?, ?, ?, ?, 'admin', ?, ?)
-  `).run(id, "admin@instapuan.com", passwordHash, "Admin", now, now);
+let created = 0;
+for (const u of testUsers) {
+  const existing = db.prepare("SELECT id FROM users WHERE email = ?").get(u.email);
+  if (!existing) {
+    const id = randomBytes(12).toString("hex");
+    const now = Date.now();
+    insertUser.run(id, u.email, hashSync(u.password, 10), u.name, u.role, now, now);
+    created++;
+    console.log(`✅ ${u.role.toUpperCase()} oluşturuldu: ${u.email} / ${u.password}`);
+  }
+}
 
-  console.log("✅ Admin kullanıcısı oluşturuldu:");
-  console.log("   Email: admin@instapuan.com");
-  console.log("   Şifre:", adminPassword);
-} else {
-  console.log("✅ Veritabanı hazır (admin zaten mevcut)");
+if (created === 0) {
+  console.log("✅ Tüm kullanıcılar zaten mevcut");
 }
 
 db.close();
