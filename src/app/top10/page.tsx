@@ -20,9 +20,16 @@ function Top10Content() {
 
   useEffect(() => {
     fetch("/api/leaderboard")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
       .then((data) => {
-        setItems(data);
+        setItems(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Leaderboard fetch error:", err);
         setLoading(false);
       });
   }, []);

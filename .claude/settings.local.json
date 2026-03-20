@@ -46,7 +46,9 @@
       "Bash(curl -s -X POST https://backboard.railway.app/graphql/v2 -H \"Authorization: Bearer 04b28c12-c88c-434c-a8f9-209d776f59fc\" -H \"Content-Type: application/json\" -d '{\"\"query\"\":\"\"{ deploymentLogs\\(deploymentId: \\\\\"\"b2c50b5f-3c0e-4000-0000-000000000000\\\\\"\"\\) { timestamp message } }\"\"}')",
       "Bash(node -e \"const d=JSON.parse\\(require\\(''fs''\\).readFileSync\\(''/tmp/deps.json'',''utf8''\\)\\);d.data.deployments.edges.slice\\(0,3\\).forEach\\(e=>{console.log\\(e.node.id+'' | ''+e.node.status\\)}\\)\")",
       "Bash(curl -s -X POST https://backboard.railway.app/graphql/v2 -H \"Authorization: Bearer 04b28c12-c88c-434c-a8f9-209d776f59fc\" -H \"Content-Type: application/json\" -d '{\"\"query\"\":\"\"{ deploymentLogs\\(deploymentId: \\\\\"\"b2c50b5f-b947-49e2-8b75-4a15f4906115\\\\\"\"\\) { timestamp message } }\"\"}')",
-      "Bash(node -e \"const d=JSON.parse\\(require\\(''fs''\\).readFileSync\\(''/tmp/logs3.json'',''utf8''\\)\\);\\(d.data?.deploymentLogs||[]\\).forEach\\(l=>console.log\\(l.message\\)\\)\")"
+      "Bash(node -e \"const d=JSON.parse\\(require\\(''fs''\\).readFileSync\\(''/tmp/logs3.json'',''utf8''\\)\\);\\(d.data?.deploymentLogs||[]\\).forEach\\(l=>console.log\\(l.message\\)\\)\")",
+      "Bash(node -e \"const d=JSON.parse\\(require\\(''fs''\\).readFileSync\\(''/tmp/deps2.json'',''utf8''\\)\\);d.data.deployments.edges.slice\\(0,3\\).forEach\\(e=>{console.log\\(e.node.id+'' | ''+e.node.status+'' | ''+e.node.createdAt\\)}\\)\")",
+      "Bash(curl -s -X POST https://backboard.railway.app/graphql/v2 -H \"Authorization: Bearer 04b28c12-c88c-434c-a8f9-209d776f59fc\" -H \"Content-Type: application/json\" -d '{\"\"query\"\":\"\"mutation { variableUpsert\\(input: { projectId: \\\\\"\"bccd6a6f-1789-4fac-8efe-dc552e199370\\\\\"\", environmentId: \\\\\"\"fac5efdd-897d-4819-96d1-90a09b62b6be\\\\\"\", serviceId: \\\\\"\"a222d91b-da4d-47c2-89d3-5a1a84c5091f\\\\\"\", name: \\\\\"\"PORT\\\\\"\", value: \\\\\"\"3000\\\\\"\" }\\) }\"\"}')"
     ]
   }
 }

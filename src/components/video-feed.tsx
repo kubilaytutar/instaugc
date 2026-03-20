@@ -22,9 +22,16 @@ export function VideoFeed() {
 
   useEffect(() => {
     fetch("/api/videos")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
       .then((data) => {
-        setVideos(data);
+        setVideos(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Video fetch error:", err);
         setLoading(false);
       });
   }, []);
