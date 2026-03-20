@@ -1,5 +1,6 @@
 // Production seed - creates admin user if not exists
 // Runs on every container start (safe - checks first)
+// Retries if volume not yet mounted
 const Database = require("better-sqlite3");
 const path = require("path");
 const fs = require("fs");
@@ -7,11 +8,34 @@ const fs = require("fs");
 const dbPath = process.env.DATABASE_PATH || "/data/instapuan.db";
 const dataDir = path.dirname(dbPath);
 
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const db = new Database(dbPath);
+function openDb(retries = 10, delayMs = 2000) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+      }
+      // Test write permission
+      const testFile = path.join(dataDir, ".write-test");
+      fs.writeFileSync(testFile, "ok");
+      fs.unlinkSync(testFile);
+      return new Database(dbPath);
+    } catch (err) {
+      console.log(`[seed] Attempt ${i + 1}/${retries} failed: ${err.message}`);
+      if (i < retries - 1) {
+        console.log(`[seed] Waiting ${delayMs}ms for volume mount...`);
+        const start = Date.now();
+        while (Date.now() - start < delayMs) { /* busy wait */ }
+      }
+    }
+  }
+  throw new Error(`Could not open database at ${dbPath} after ${retries} retries`);
+}
+
+const db = openDb();
 db.pragma("journal_mode = WAL");
 db.pragma("foreign_keys = ON");
 
