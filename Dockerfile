@@ -33,6 +33,15 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
+# Copy modules needed by seed-prod.js (not included in standalone)
+COPY --from=deps /app/node_modules/bcryptjs ./node_modules/bcryptjs
+COPY --from=deps /app/node_modules/@paralleldrive ./node_modules/@paralleldrive
+COPY --from=deps /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
+COPY --from=deps /app/node_modules/bindings ./node_modules/bindings
+COPY --from=deps /app/node_modules/prebuild-install ./node_modules/prebuild-install
+COPY --from=deps /app/node_modules/file-uri-to-path ./node_modules/file-uri-to-path
+COPY --from=deps /app/node_modules/node-addon-api ./node_modules/node-addon-api
+
 # Create data directory for SQLite
 RUN mkdir -p /data && chmod 777 /data
 
@@ -41,4 +50,4 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # Run seed then start server
-CMD ["sh", "-c", "node scripts/seed-prod.js && node server.js"]
+CMD ["sh", "-c", "sleep 3 && node scripts/seed-prod.js && node server.js"]
