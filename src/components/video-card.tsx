@@ -28,6 +28,7 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
   const [selected, setSelected] = useState<number | null>(video.user_rating);
   const [avgRating, setAvgRating] = useState(video.avg_rating);
   const [totalVotes, setTotalVotes] = useState(video.total_votes);
+  const [showRating, setShowRating] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [commentText, setCommentText] = useState("");
@@ -53,6 +54,7 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
       setTotalVotes(data.totalVotes);
       onRate(video.id, score);
     }
+    setTimeout(() => setShowRating(false), 600);
   }, [video.id, onRate]);
 
   const handleSendComment = useCallback(async () => {
@@ -75,119 +77,149 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
   }, [video.id, commentText, sending]);
 
   return (
-    <div className="snap-item h-full w-full flex-shrink-0 flex flex-col bg-black">
-      {/* Video alanı — kalan yeri doldurur */}
-      <div className="relative flex-1 min-h-0 overflow-hidden">
-        <GDrivePlayer fileId={video.drive_file_id} isActive={isActive} />
+    <div className="snap-item relative h-[100dvh] w-full flex-shrink-0 bg-black">
+      {/* Tam ekran video */}
+      <GDrivePlayer fileId={video.drive_file_id} isActive={isActive} />
 
-        {/* Başlık overlay (videonun üstünde) */}
-        <div className="absolute inset-x-0 top-0 z-10 px-3 pt-3">
-          <div className="flex items-start justify-between">
-            <div className="flex-1 pr-2">
-              {video.uploader_name && (
-                <p className="text-[11px] text-white/50">{video.uploader_name}</p>
-              )}
-              <h2 className="text-sm font-bold text-white drop-shadow-md line-clamp-1">
-                {video.title}
-              </h2>
-            </div>
-            {avgRating !== null && totalVotes > 0 && (
-              <div className="rounded-xl bg-black/50 backdrop-blur-sm px-2.5 py-1.5 text-center">
-                <p className="text-lg font-black text-white leading-none">{avgRating}</p>
-                <p className="text-[8px] text-white/40">{totalVotes} oy</p>
-              </div>
-            )}
+      {/* Alt gradient */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/80 to-transparent" />
+
+      {/* Sol alt: başlık + kaynak (TikTok tarzı) */}
+      <div className="absolute left-0 bottom-16 z-10 px-4 pr-20">
+        <p className="text-sm font-bold text-white drop-shadow-lg">{video.title}</p>
+        {video.uploader_name && (
+          <p className="text-xs text-white/60 mt-0.5">@{video.uploader_name}</p>
+        )}
+      </div>
+
+      {/* Sağ: dikey aksiyon butonları (TikTok/Reels tarzı) */}
+      <div className="absolute right-3 bottom-20 z-10 flex flex-col items-center gap-5">
+        {/* Puan butonu */}
+        <button
+          onClick={() => setShowRating(!showRating)}
+          className="flex flex-col items-center"
+        >
+          <div className={`flex h-11 w-11 items-center justify-center rounded-full ${
+            selected ? "bg-white" : "bg-white/20 backdrop-blur-sm"
+          }`}>
+            <span className={`text-base font-black ${selected ? "text-black" : "text-white"}`}>
+              {selected || "★"}
+            </span>
           </div>
-        </div>
-      </div>
-
-      {/* Kontrol alanı — sabit, scroll etmez */}
-      <div
-        className="flex-shrink-0 bg-black px-3 py-2 space-y-2 border-t border-white/5"
-        onTouchStart={(e) => e.stopPropagation()}
-        onTouchMove={(e) => e.stopPropagation()}
-      >
-        {/* Puan butonları */}
-        <div className="flex items-center justify-between mb-1 px-0.5">
-          <span className="text-[11px] text-white/40">
-            {selected ? `Puanın: ${selected}/10` : "Puan ver"}
+          <span className="text-[10px] text-white/70 mt-1">
+            {avgRating !== null && totalVotes > 0 ? `${avgRating}` : "Puan"}
           </span>
-          <button
-            onClick={() => setCommentsOpen(true)}
-            className="text-[11px] text-white/40 hover:text-white/70"
-          >
-            💬 {comments.length > 0 ? comments.length : "Yorum"}
-          </button>
-        </div>
+        </button>
 
-        <div className="flex gap-[4px]">
-          {[1,2,3,4,5,6,7,8,9,10].map((score) => (
-            <button
-              key={score}
-              onClick={() => handleRate(score)}
-              className={`flex h-9 flex-1 items-center justify-center rounded-lg text-xs font-semibold transition-all active:scale-95 ${
-                selected === score
-                  ? "bg-white text-black"
-                  : selected !== null && score <= selected
-                  ? "bg-white/20 text-white"
-                  : "bg-white/8 text-white/40"
-              }`}
-            >
-              {score}
-            </button>
-          ))}
-        </div>
+        {/* Yorum butonu */}
+        <button
+          onClick={() => setCommentsOpen(true)}
+          className="flex flex-col items-center"
+        >
+          <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+            <span className="text-lg">💬</span>
+          </div>
+          <span className="text-[10px] text-white/70 mt-1">Yorum</span>
+        </button>
 
-        {/* Yorum inputu */}
-        <div className="flex items-center gap-2 rounded-xl bg-white/8 px-3 py-2">
-          <input
-            type="text"
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSendComment()}
-            placeholder="Yorum ekle..."
-            className="flex-1 bg-transparent text-sm text-white placeholder-white/30 focus:outline-none"
-          />
-          <button
-            onClick={handleSendComment}
-            disabled={!commentText.trim() || sending}
-            className="h-7 w-7 flex-shrink-0 flex items-center justify-center rounded-full bg-white text-black text-xs font-bold disabled:opacity-20"
-          >
-            ↑
-          </button>
-        </div>
+        {/* Oy sayısı */}
+        {totalVotes > 0 && (
+          <div className="flex flex-col items-center">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+              <span className="text-sm font-bold text-white">{totalVotes}</span>
+            </div>
+            <span className="text-[10px] text-white/70 mt-1">Oy</span>
+          </div>
+        )}
       </div>
 
-      {/* Yorumlar slide-up panel */}
-      {commentsOpen && (
-        <div className="absolute inset-0 z-30 flex items-end" onClick={() => setCommentsOpen(false)}>
+      {/* Puan seçim paneli (tıklanınca açılır) */}
+      {showRating && (
+        <div
+          className="absolute inset-0 z-20 flex items-center justify-center bg-black/60"
+          onClick={() => setShowRating(false)}
+        >
           <div
-            className="w-full rounded-t-2xl bg-zinc-950 border-t border-white/10 pb-4"
-            style={{ maxHeight: "55%" }}
+            className="rounded-3xl bg-zinc-900/95 backdrop-blur-xl p-5 mx-6"
             onClick={(e) => e.stopPropagation()}
           >
+            <p className="text-center text-sm font-semibold text-white mb-4">
+              {selected ? `Puanın: ${selected} / 10` : "Bu videoya kaç puan verirsin?"}
+            </p>
+            <div className="grid grid-cols-5 gap-2">
+              {[1,2,3,4,5,6,7,8,9,10].map((score) => (
+                <button
+                  key={score}
+                  onClick={() => handleRate(score)}
+                  className={`h-12 w-12 rounded-2xl text-base font-bold transition-all active:scale-90 ${
+                    selected === score
+                      ? "bg-white text-black scale-110"
+                      : "bg-white/10 text-white hover:bg-white/20"
+                  }`}
+                >
+                  {score}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Yorumlar paneli (altan açılır, TikTok tarzı) */}
+      {commentsOpen && (
+        <div
+          className="absolute inset-0 z-20 flex items-end bg-black/50"
+          onClick={() => setCommentsOpen(false)}
+        >
+          <div
+            className="w-full rounded-t-2xl bg-zinc-950 border-t border-white/10"
+            style={{ maxHeight: "60dvh" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
               <span className="text-sm font-semibold text-white">
                 Yorumlar {comments.length > 0 && `(${comments.length})`}
               </span>
-              <button onClick={() => setCommentsOpen(false)} className="text-white/30 hover:text-white text-lg">×</button>
+              <button onClick={() => setCommentsOpen(false)} className="text-white/30 text-xl leading-none">×</button>
             </div>
-            <div className="overflow-y-auto px-4 py-3 space-y-3" style={{ maxHeight: "calc(55vh - 60px)" }}>
+
+            {/* Yorum listesi */}
+            <div className="overflow-y-auto px-4 py-3 space-y-4" style={{ maxHeight: "calc(60dvh - 110px)" }}>
               {comments.length === 0 ? (
-                <p className="text-sm text-white/20 text-center py-4">Henüz yorum yok</p>
+                <p className="text-sm text-white/20 text-center py-6">Henüz yorum yok</p>
               ) : (
                 comments.map((c) => (
                   <div key={c.id} className="flex gap-2.5">
-                    <div className="h-7 w-7 flex-shrink-0 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold text-white/60">
+                    <div className="h-8 w-8 flex-shrink-0 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white/50">
                       {c.user_name.charAt(0).toUpperCase()}
                     </div>
-                    <div>
-                      <p className="text-[11px] font-medium text-white/40">{c.user_name}</p>
-                      <p className="text-sm text-white/80">{c.text}</p>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-white/40">{c.user_name}</p>
+                      <p className="text-sm text-white/80 mt-0.5">{c.text}</p>
                     </div>
                   </div>
                 ))
               )}
+            </div>
+
+            {/* Yorum yaz */}
+            <div className="flex items-center gap-2 px-4 py-3 border-t border-white/5">
+              <input
+                type="text"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSendComment()}
+                placeholder="Yorum ekle..."
+                className="flex-1 rounded-full bg-white/10 px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none"
+              />
+              <button
+                onClick={handleSendComment}
+                disabled={!commentText.trim() || sending}
+                className="h-9 w-9 flex-shrink-0 rounded-full bg-white flex items-center justify-center disabled:opacity-20"
+              >
+                <span className="text-black text-sm font-bold">↑</span>
+              </button>
             </div>
           </div>
         </div>
