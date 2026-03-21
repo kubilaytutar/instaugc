@@ -2,7 +2,8 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { sql } from "drizzle-orm";
+import { users } from "@/lib/db/schema";
+import { eq, sql } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
 
 export async function GET(req: NextRequest) {
@@ -42,7 +43,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "videoId and text required" }, { status: 400 });
   }
 
-  const userId = session.user.id;
+  // session.user.id güvenilmez (NextAuth v5 beta), email'den DB'de ara
+  const email = session.user.email!;
+  const dbUser = db.select().from(users).where(eq(users.email, email)).get();
+  if (!dbUser) return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
+
+  const userId = dbUser.id;
+  const userName = dbUser.name;
   const now = Date.now();
 
   try {
@@ -56,5 +63,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 
-  return NextResponse.json({ success: true, userId, userName: session.user.name, text: text.trim() });
+  return NextResponse.json({ success: true, userId, userName, text: text.trim() });
 }

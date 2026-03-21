@@ -2,7 +2,8 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { sql } from "drizzle-orm";
+import { users } from "@/lib/db/schema";
+import { eq, sql } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
 
 export async function POST(req: NextRequest) {
@@ -19,7 +20,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Geçersiz videoId veya puan (1-10)" }, { status: 400 });
   }
 
-  const userId = session.user.id;
+  const email = session.user.email!;
+  const dbUser = db.select().from(users).where(eq(users.email, email)).get();
+  if (!dbUser) return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
+
+  const userId = dbUser.id;
   const now = Date.now();
 
   db.run(sql`
