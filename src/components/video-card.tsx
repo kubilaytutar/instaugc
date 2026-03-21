@@ -33,6 +33,7 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
   const [commentsOpen, setCommentsOpen] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [sending, setSending] = useState(false);
+  const [commentError, setCommentError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!commentsOpen) return;
@@ -57,31 +58,34 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
     setTimeout(() => setShowRating(false), 600);
   }, [video.id, onRate]);
 
-  const handleSendComment = useCallback(async () => {
-    if (!commentText.trim() || sending) return;
+  const handleSendComment = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     const text = commentText.trim();
+    if (!text || sending) return;
     setSending(true);
-    setCommentText("");
+    setCommentError(null);
     try {
       const res = await fetch("/api/comments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ videoId: video.id, text }),
       });
+      const data = await res.json();
       if (res.ok) {
-        const data = await res.json();
+        setCommentText("");
         setComments((prev) => [
           ...prev,
           { id: Date.now().toString(), text: data.text, user_name: data.userName ?? "Ben", created_at: Date.now() },
         ]);
       } else {
-        setCommentText(text);
+        setCommentError(data.error ?? `Hata ${res.status}`);
       }
-    } catch {
-      setCommentText(text);
+    } catch (err) {
+      setCommentError("Ağ hatası, tekrar dene");
+    } finally {
+      setSending(false);
     }
-    setSending(false);
-  }, [video.id, commentText, sending]);
+  };
 
   return (
     <div className="snap-item relative h-full w-full flex-shrink-0 bg-black">
@@ -211,24 +215,35 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
               )}
             </div>
 
-            {/* Yorum yaz */}
-            <div className="flex items-center gap-2 px-4 py-3 border-t border-white/5 flex-shrink-0">
+            {/* Hata mesajı */}
+            {commentError && (
+              <div className="mx-4 mb-1 rounded-lg bg-red-500/20 px-3 py-1.5 flex-shrink-0">
+                <p className="text-xs text-red-300">{commentError}</p>
+              </div>
+            )}
+
+            {/* Yorum yaz — form ile mobil klavye uyumlu */}
+            <form
+              onSubmit={handleSendComment}
+              className="flex items-center gap-2 px-4 py-3 border-t border-white/5 flex-shrink-0"
+            >
               <input
                 type="text"
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSendComment()}
                 placeholder="Yorum ekle..."
+                enterKeyHint="send"
+                autoComplete="off"
                 className="flex-1 rounded-full bg-white/10 px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none"
               />
               <button
-                onClick={handleSendComment}
+                type="submit"
                 disabled={!commentText.trim() || sending}
                 className="h-9 w-9 flex-shrink-0 rounded-full bg-white flex items-center justify-center disabled:opacity-20"
               >
-                <span className="text-black text-sm font-bold">↑</span>
+                <span className="text-black text-sm font-bold">{sending ? "…" : "↑"}</span>
               </button>
-            </div>
+            </form>
           </div>
         </div>
       )}
