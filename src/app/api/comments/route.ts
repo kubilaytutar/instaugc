@@ -51,8 +51,9 @@ export async function POST(req: NextRequest) {
       VALUES (${createId()}, ${userId}, ${videoId}, ${text.trim()}, ${now}, ${now})
     `);
   } catch (err) {
-    console.error("Comment insert error:", err);
-    return NextResponse.json({ error: "Yorum kaydedilemedi" }, { status: 500 });
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("Comment insert error:", msg, { userId, videoId });
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 
   return NextResponse.json({ success: true, userId, userName: session.user.name, text: text.trim() });
