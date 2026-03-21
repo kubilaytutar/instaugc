@@ -59,19 +59,26 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
 
   const handleSendComment = useCallback(async () => {
     if (!commentText.trim() || sending) return;
+    const text = commentText.trim();
     setSending(true);
-    const res = await fetch("/api/comments", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ videoId: video.id, text: commentText }),
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setComments((prev) => [
-        ...prev,
-        { id: Date.now().toString(), text: data.text, user_name: data.userName, created_at: Date.now() },
-      ]);
-      setCommentText("");
+    setCommentText("");
+    try {
+      const res = await fetch("/api/comments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ videoId: video.id, text }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setComments((prev) => [
+          ...prev,
+          { id: Date.now().toString(), text: data.text, user_name: data.userName ?? "Ben", created_at: Date.now() },
+        ]);
+      } else {
+        setCommentText(text);
+      }
+    } catch {
+      setCommentText(text);
     }
     setSending(false);
   }, [video.id, commentText, sending]);
@@ -122,15 +129,6 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
           <span className="text-[10px] text-white/70 mt-1">Yorum</span>
         </button>
 
-        {/* Oy sayısı */}
-        {totalVotes > 0 && (
-          <div className="flex flex-col items-center">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
-              <span className="text-sm font-bold text-white">{totalVotes}</span>
-            </div>
-            <span className="text-[10px] text-white/70 mt-1">Oy</span>
-          </div>
-        )}
       </div>
 
       {/* Puan seçim paneli (tıklanınca açılır) */}
@@ -165,34 +163,39 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
         </div>
       )}
 
-      {/* Yorumlar paneli (altan açılır, TikTok tarzı) */}
+      {/* Yorumlar paneli (üstten aşağı açılır) */}
       {commentsOpen && (
         <div
-          className="absolute inset-0 z-[60] flex items-end bg-black/50"
+          className="absolute inset-0 z-[60] bg-black/60"
           onClick={() => setCommentsOpen(false)}
         >
           <div
-            className="w-full rounded-t-2xl bg-zinc-950 border-t border-white/10"
-            style={{ maxHeight: "55dvh" }}
+            className="absolute inset-x-0 top-0 flex flex-col bg-zinc-950 rounded-b-2xl border-b border-white/10"
+            style={{ maxHeight: "78%" }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 flex-shrink-0">
               <span className="text-sm font-semibold text-white">
                 Yorumlar {comments.length > 0 && `(${comments.length})`}
               </span>
-              <button onClick={() => setCommentsOpen(false)} className="text-white/30 text-xl leading-none">×</button>
+              <button
+                onClick={() => setCommentsOpen(false)}
+                className="h-7 w-7 flex items-center justify-center rounded-full bg-white/10 text-white/50 text-base leading-none"
+              >
+                ×
+              </button>
             </div>
 
             {/* Yorum listesi */}
-            <div className="overflow-y-auto px-4 py-3 space-y-4" style={{ maxHeight: "calc(60dvh - 110px)" }}>
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 min-h-0">
               {comments.length === 0 ? (
                 <p className="text-sm text-white/20 text-center py-6">Henüz yorum yok</p>
               ) : (
                 comments.map((c) => (
                   <div key={c.id} className="flex gap-2.5">
                     <div className="h-8 w-8 flex-shrink-0 rounded-full bg-white/10 flex items-center justify-center text-xs font-bold text-white/50">
-                      {c.user_name.charAt(0).toUpperCase()}
+                      {(c.user_name || "?").charAt(0).toUpperCase()}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium text-white/40">{c.user_name}</p>
@@ -204,7 +207,7 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
             </div>
 
             {/* Yorum yaz */}
-            <div className="flex items-center gap-2 px-4 py-3 border-t border-white/5">
+            <div className="flex items-center gap-2 px-4 py-3 border-t border-white/5 flex-shrink-0">
               <input
                 type="text"
                 value={commentText}
