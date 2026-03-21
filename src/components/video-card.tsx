@@ -93,10 +93,10 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
           </h2>
         </div>
 
-        {avgRating !== null && (
-          <div className="flex-shrink-0 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 px-3 py-2 text-center">
+        {avgRating !== null && totalVotes > 0 && (
+          <div className="flex-shrink-0 rounded-2xl bg-black/40 backdrop-blur-md px-3 py-2 text-center">
             <p className="text-xl font-black text-white leading-none">{avgRating}</p>
-            <p className="text-[9px] text-white/50 mt-0.5">{totalVotes} oy</p>
+            <p className="text-[9px] text-white/40 mt-0.5">{totalVotes} oy</p>
           </div>
         )}
       </div>
@@ -119,17 +119,17 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
             </button>
           </div>
 
-          <div className="flex gap-1">
+          <div className="flex gap-[5px]">
             {[1,2,3,4,5,6,7,8,9,10].map((score) => (
               <button
                 key={score}
                 onClick={() => handleRate(score)}
-                className={`flex h-9 flex-1 items-center justify-center rounded-xl text-xs font-bold transition-all active:scale-90 ${
+                className={`flex h-10 flex-1 items-center justify-center rounded-full text-xs font-semibold transition-all duration-150 active:scale-90 ${
                   selected === score
-                    ? "bg-purple-500 text-white"
+                    ? "bg-white text-black shadow-lg shadow-white/20"
                     : selected !== null && score <= selected
-                    ? "bg-purple-500/30 text-purple-300"
-                    : "bg-white/10 text-white/70"
+                    ? "bg-white/20 text-white"
+                    : "bg-white/8 text-white/40 hover:bg-white/15"
                 }`}
               >
                 {score}
@@ -151,7 +151,7 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
           <button
             onClick={handleSendComment}
             disabled={!commentText.trim() || sending}
-            className="h-7 w-7 flex-shrink-0 flex items-center justify-center rounded-full bg-purple-500 text-xs text-white disabled:opacity-30 transition-all"
+            className="h-7 w-7 flex-shrink-0 flex items-center justify-center rounded-full bg-white text-xs text-black font-bold disabled:opacity-20 transition-all"
           >
             {sending ? "·" : "↑"}
           </button>

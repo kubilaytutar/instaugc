@@ -19,7 +19,7 @@ export function NavBar() {
   ].filter((l) => !role || l.roles.includes(role));
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 bg-black/95 backdrop-blur-xl border-t border-white/8">
+    <nav className="absolute inset-x-0 bottom-0 z-50 bg-black/95 backdrop-blur-xl border-t border-white/8">
       {/* Kullanıcı satırı */}
       <div className="flex items-center justify-between px-4 pt-2 pb-1">
         <div className="flex items-center gap-2">

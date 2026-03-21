@@ -43,8 +43,8 @@ function Top10Content() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-black pb-24 pt-4">
-      <div className="px-4">
+    <div className="min-h-[100dvh] bg-black pb-28 pt-14">
+      <div className="px-4 max-w-[430px] mx-auto">
         <h1 className="mb-6 text-center text-2xl font-bold text-white">
           Top 10
         </h1>

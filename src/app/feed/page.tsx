@@ -5,9 +5,8 @@ import { AuthProvider } from "@/components/session-provider";
 export default function FeedPage() {
   return (
     <AuthProvider>
-      {/* Portrait centering: on desktop shows phone-sized feed */}
-      <div className="flex h-[100dvh] justify-center bg-zinc-950">
-        <div className="relative h-full w-full max-w-[430px]">
+      <div className="feed-shell">
+        <div className="feed-phone">
           <VideoFeed />
           <NavBar />
         </div>
