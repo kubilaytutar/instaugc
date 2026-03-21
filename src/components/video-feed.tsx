@@ -109,10 +109,10 @@ export function VideoFeed() {
   return (
     <div
       ref={containerRef}
-      className="snap-container no-scrollbar h-[100dvh] overflow-y-scroll bg-black"
+      className="snap-container no-scrollbar h-full overflow-y-scroll bg-black"
     >
       {videos.map((video, index) => (
-        <div key={video.id} data-index={index}>
+        <div key={video.id} data-index={index} className="h-full">
           <VideoCard
             video={video}
             isActive={Math.abs(activeIndex - index) <= 1}

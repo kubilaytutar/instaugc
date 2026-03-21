@@ -18,7 +18,7 @@ export function NavBar() {
   ].filter((l) => !role || l.roles.includes(role));
 
   return (
-    <nav className="absolute inset-x-0 bottom-0 z-50 bg-black border-t border-white/8">
+    <nav className="flex-shrink-0 bg-black border-t border-white/8 z-50">
       <div className="flex items-center justify-around py-2 pb-3">
         {links.map((link) => {
           const active = pathname === link.href || pathname.startsWith(link.href + "/");

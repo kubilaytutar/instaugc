@@ -6,8 +6,10 @@ export default function FeedPage() {
   return (
     <AuthProvider>
       <div className="feed-shell">
-        <div className="feed-phone">
-          <VideoFeed />
+        <div className="feed-phone flex flex-col">
+          <div className="flex-1 min-h-0">
+            <VideoFeed />
+          </div>
           <NavBar />
         </div>
       </div>

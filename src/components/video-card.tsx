@@ -77,7 +77,7 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
   }, [video.id, commentText, sending]);
 
   return (
-    <div className="snap-item relative h-[100dvh] w-full flex-shrink-0 bg-black">
+    <div className="snap-item relative h-full w-full flex-shrink-0 bg-black">
       {/* Tam ekran video */}
       <GDrivePlayer fileId={video.drive_file_id} isActive={isActive} />
 
@@ -85,7 +85,7 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/80 to-transparent" />
 
       {/* Sol alt: başlık + kaynak (TikTok tarzı) */}
-      <div className="absolute left-0 bottom-28 z-10 px-4 pr-20">
+      <div className="absolute left-0 bottom-6 z-10 px-4 pr-20">
         <p className="text-sm font-bold text-white drop-shadow-lg">{video.title}</p>
         {video.uploader_name && (
           <p className="text-xs text-white/60 mt-0.5">@{video.uploader_name}</p>
@@ -93,7 +93,7 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
       </div>
 
       {/* Sağ: dikey aksiyon butonları (TikTok/Reels tarzı) */}
-      <div className="absolute right-3 bottom-32 z-10 flex flex-col items-center gap-5">
+      <div className="absolute right-3 bottom-6 z-10 flex flex-col items-center gap-5">
         {/* Puan butonu */}
         <button
           onClick={() => setShowRating(!showRating)}
@@ -136,7 +136,7 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
       {/* Puan seçim paneli (tıklanınca açılır) */}
       {showRating && (
         <div
-          className="absolute inset-0 z-20 flex items-center justify-center bg-black/60"
+          className="absolute inset-0 z-[60] flex items-center justify-center bg-black/60"
           onClick={() => setShowRating(false)}
         >
           <div
@@ -168,11 +168,11 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
       {/* Yorumlar paneli (altan açılır, TikTok tarzı) */}
       {commentsOpen && (
         <div
-          className="absolute inset-0 z-20 flex items-end bg-black/50"
+          className="absolute inset-0 z-[60] flex items-end bg-black/50"
           onClick={() => setCommentsOpen(false)}
         >
           <div
-            className="w-full rounded-t-2xl bg-zinc-950 border-t border-white/10 mb-14"
+            className="w-full rounded-t-2xl bg-zinc-950 border-t border-white/10"
             style={{ maxHeight: "55dvh" }}
             onClick={(e) => e.stopPropagation()}
           >
