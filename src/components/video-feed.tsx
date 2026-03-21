@@ -89,18 +89,18 @@ export function VideoFeed() {
 
   if (loading) {
     return (
-      <div className="flex h-[100dvh] items-center justify-center bg-black">
-        <div className="text-zinc-500">Yukleniyor...</div>
+      <div className="flex h-full items-center justify-center bg-black">
+        <div className="text-white/30 text-sm">Yükleniyor...</div>
       </div>
     );
   }
 
   if (videos.length === 0) {
     return (
-      <div className="flex h-[100dvh] items-center justify-center bg-black">
-        <div className="text-center text-zinc-500">
-          <p className="text-lg">Henuz video yok</p>
-          <p className="text-sm">Admin tarafindan video eklenmesini bekleyin</p>
+      <div className="flex h-full items-center justify-center bg-black">
+        <div className="text-center text-white/30">
+          <p className="text-base">Henüz video yok</p>
+          <p className="text-xs mt-1 text-white/20">Admin tarafından video eklenmesini bekleyin</p>
         </div>
       </div>
     );
@@ -109,7 +109,7 @@ export function VideoFeed() {
   return (
     <div
       ref={containerRef}
-      className="snap-container no-scrollbar h-[100dvh] overflow-y-scroll bg-black"
+      className="snap-container no-scrollbar h-full overflow-y-scroll bg-black"
     >
       {videos.map((video, index) => (
         <div key={video.id} data-index={index}>

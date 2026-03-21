@@ -75,8 +75,7 @@ function MyVideosContent() {
   };
 
   return (
-    <div className="flex h-[100dvh] justify-center bg-black">
-      <div className="flex h-full w-full max-w-[430px] flex-col">
+    <div className="flex h-full flex-col bg-black">
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-14 pb-4 border-b border-white/8">
           <div>
@@ -226,14 +225,17 @@ function MyVideosContent() {
           )}
         </div>
       </div>
-    </div>
   );
 }
 
 export default function MyVideosPage() {
   return (
     <AuthProvider>
-      <MyVideosContent />
+      <div className="feed-shell">
+        <div className="feed-phone">
+          <MyVideosContent />
+        </div>
+      </div>
     </AuthProvider>
   );
 }

@@ -75,7 +75,7 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
   }, [video.id, commentText, sending]);
 
   return (
-    <div className="snap-item relative h-[100dvh] w-full flex-shrink-0 overflow-hidden bg-black">
+    <div className="snap-item relative h-full w-full flex-shrink-0 overflow-hidden bg-black">
       {/* Video */}
       <GDrivePlayer fileId={video.drive_file_id} isActive={isActive} />
 
