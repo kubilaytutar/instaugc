@@ -22,6 +22,7 @@ export const videos = sqliteTable("videos", {
   uploaderName: text("uploader_name"),
   uploadedById: text("uploaded_by_id").references(() => users.id, { onDelete: "set null" }),
   description: text("description"),
+  adminFeedback: text("admin_feedback"),
   sortOrder: integer("sort_order").notNull().default(0),
   isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
   createdAt: integer("created_at", { mode: "timestamp_ms" }).notNull(),

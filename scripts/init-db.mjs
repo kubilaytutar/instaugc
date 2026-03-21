@@ -34,6 +34,7 @@ db.exec(`
     uploader_name TEXT,
     uploaded_by_id TEXT REFERENCES users(id) ON DELETE SET NULL,
     description TEXT,
+    admin_feedback TEXT,
     sort_order INTEGER NOT NULL DEFAULT 0,
     is_active INTEGER NOT NULL DEFAULT 1,
     created_at INTEGER NOT NULL,
@@ -56,10 +57,38 @@ db.exec(`
     video_id TEXT NOT NULL REFERENCES videos(id) ON DELETE CASCADE,
     text TEXT NOT NULL,
     created_at INTEGER NOT NULL,
-    updated_at INTEGER NOT NULL,
-    UNIQUE(user_id, video_id)
+    updated_at INTEGER NOT NULL
   );
 `);
+
+// Mevcut videos tablosuna admin_feedback kolonu ekle (yoksa)
+try {
+  db.exec(`ALTER TABLE videos ADD COLUMN admin_feedback TEXT`);
+  console.log("✅ admin_feedback kolonu eklendi");
+} catch {
+  // Zaten var, sorun değil
+}
+
+// comments tablosundaki UNIQUE constraint'i kaldır (birden fazla yorum için)
+// SQLite'da constraint kaldırmak için tabloyu yeniden oluşturmak gerekiyor
+const commentsCols = db.prepare("PRAGMA table_info(comments)").all();
+const hasUniqueIdx = db.prepare("SELECT * FROM sqlite_master WHERE type='index' AND tbl_name='comments' AND sql LIKE '%user_id%video_id%'").all();
+if (hasUniqueIdx.length > 0) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS comments_new (
+      id TEXT PRIMARY KEY NOT NULL,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      video_id TEXT NOT NULL REFERENCES videos(id) ON DELETE CASCADE,
+      text TEXT NOT NULL,
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    );
+    INSERT OR IGNORE INTO comments_new SELECT id, user_id, video_id, text, created_at, updated_at FROM comments;
+    DROP TABLE comments;
+    ALTER TABLE comments_new RENAME TO comments;
+  `);
+  console.log("✅ comments UNIQUE constraint kaldırıldı");
+}
 
 // Kullanıcıları oluştur (yoksa)
 const { hashSync } = await import("bcryptjs");

@@ -7,6 +7,7 @@
 
 * {
   -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
 }
 
 body {
@@ -15,7 +16,7 @@ body {
   overscroll-behavior: none;
 }
 
-/* Hide scrollbar for feed */
+/* Scrollbar gizle */
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -24,7 +25,7 @@ body {
   display: none;
 }
 
-/* Smooth scroll snap */
+/* Snap scroll */
 .snap-container {
   scroll-snap-type: y mandatory;
   -webkit-overflow-scrolling: touch;
@@ -32,4 +33,29 @@ body {
 .snap-item {
   scroll-snap-align: start;
   scroll-snap-stop: always;
+}
+
+/* Portrait video — iframe tam ekranı kaplasın */
+.snap-item iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  object-fit: cover;
+}
+
+/* Feed container — masaüstünde ortala */
+.feed-container {
+  display: flex;
+  justify-content: center;
+  height: 100dvh;
+  background: #000;
+}
+
+.feed-inner {
+  width: 100%;
+  max-width: 430px;
+  height: 100dvh;
+  position: relative;
 }

@@ -32,6 +32,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (body.description !== undefined) updates.description = body.description;
   if (body.sortOrder !== undefined) updates.sortOrder = body.sortOrder;
   if (role === "admin" && body.isActive !== undefined) updates.isActive = body.isActive;
+  if (role === "admin" && body.adminFeedback !== undefined) updates.adminFeedback = body.adminFeedback;
 
   if (body.sourceUrl) {
     const driveFileId = extractDriveFileId(body.sourceUrl);

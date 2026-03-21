@@ -48,8 +48,6 @@ export async function POST(req: NextRequest) {
   db.run(sql`
     INSERT INTO comments (id, user_id, video_id, text, created_at, updated_at)
     VALUES (${createId()}, ${userId}, ${videoId}, ${text.trim()}, ${now}, ${now})
-    ON CONFLICT(user_id, video_id)
-    DO UPDATE SET text = ${text.trim()}, updated_at = ${now}
   `);
 
   return NextResponse.json({ success: true, userId, userName: session.user.name, text: text.trim() });

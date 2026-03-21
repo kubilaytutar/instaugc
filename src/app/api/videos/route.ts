@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
     // Creator sadece kendi videolarını görür, puan/yorum bilgisi olmadan
     if (role === "creator") {
       const result = db.all(sql`
-        SELECT id, title, drive_file_id, source_url, uploader_name, sort_order, is_active, created_at
+        SELECT id, title, drive_file_id, source_url, uploader_name, admin_feedback, sort_order, is_active, created_at
         FROM videos
         WHERE uploaded_by_id = ${userId} AND is_active = 1
         ORDER BY created_at DESC
@@ -29,11 +29,11 @@ export async function GET(req: NextRequest) {
     // admin + subadmin: tüm videolar + puan bilgisi
     const result = db.all(sql`
       SELECT
-        v.*,
+        v.id, v.title, v.drive_file_id, v.source_url, v.uploader_name,
+        v.description, v.admin_feedback, v.sort_order, v.is_active, v.created_at,
         ROUND(AVG(r.score), 2) as avg_rating,
         COUNT(r.id) as total_votes,
-        (SELECT r2.score FROM ratings r2 WHERE r2.video_id = v.id AND r2.user_id = ${userId}) as user_rating,
-        (SELECT c.text FROM comments c WHERE c.video_id = v.id AND c.user_id = ${userId}) as user_comment
+        (SELECT r2.score FROM ratings r2 WHERE r2.video_id = v.id AND r2.user_id = ${userId}) as user_rating
       FROM videos v
       LEFT JOIN ratings r ON r.video_id = v.id
       WHERE v.is_active = 1
