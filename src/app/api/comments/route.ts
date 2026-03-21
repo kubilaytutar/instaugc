@@ -45,10 +45,15 @@ export async function POST(req: NextRequest) {
   const userId = session.user.id;
   const now = Date.now();
 
-  db.run(sql`
-    INSERT INTO comments (id, user_id, video_id, text, created_at, updated_at)
-    VALUES (${createId()}, ${userId}, ${videoId}, ${text.trim()}, ${now}, ${now})
-  `);
+  try {
+    db.run(sql`
+      INSERT INTO comments (id, user_id, video_id, text, created_at, updated_at)
+      VALUES (${createId()}, ${userId}, ${videoId}, ${text.trim()}, ${now}, ${now})
+    `);
+  } catch (err) {
+    console.error("Comment insert error:", err);
+    return NextResponse.json({ error: "Yorum kaydedilemedi" }, { status: 500 });
+  }
 
   return NextResponse.json({ success: true, userId, userName: session.user.name, text: text.trim() });
 }

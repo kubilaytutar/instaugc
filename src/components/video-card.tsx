@@ -163,32 +163,37 @@ export function VideoCard({ video, isActive, onRate }: VideoCardProps) {
         </div>
       )}
 
-      {/* Yorumlar paneli (üstten aşağı açılır) */}
+      {/* Yorumlar paneli — altan %65 yükseklikte slide-up */}
       {commentsOpen && (
         <div
-          className="absolute inset-0 z-[60] bg-black/60"
+          className="absolute inset-0 z-[60] flex flex-col justify-end bg-black/60"
           onClick={() => setCommentsOpen(false)}
         >
           <div
-            className="absolute inset-x-0 top-0 flex flex-col bg-zinc-950 rounded-b-2xl border-b border-white/10"
-            style={{ maxHeight: "78%" }}
+            className="flex flex-col bg-zinc-950 rounded-t-2xl border-t border-white/10"
+            style={{ height: "65%" }}
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Handle çubuğu */}
+            <div className="flex justify-center pt-2 pb-1 flex-shrink-0">
+              <div className="h-1 w-10 rounded-full bg-white/20" />
+            </div>
+
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 flex-shrink-0">
+            <div className="flex items-center justify-between px-4 py-2 border-b border-white/5 flex-shrink-0">
               <span className="text-sm font-semibold text-white">
                 Yorumlar {comments.length > 0 && `(${comments.length})`}
               </span>
               <button
                 onClick={() => setCommentsOpen(false)}
-                className="h-7 w-7 flex items-center justify-center rounded-full bg-white/10 text-white/50 text-base leading-none"
+                className="h-7 w-7 flex items-center justify-center rounded-full bg-white/10 text-white/50 text-lg leading-none"
               >
                 ×
               </button>
             </div>
 
-            {/* Yorum listesi */}
-            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4 min-h-0">
+            {/* Yorum listesi — kalan tüm alanı kapla */}
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4" style={{ minHeight: 0 }}>
               {comments.length === 0 ? (
                 <p className="text-sm text-white/20 text-center py-6">Henüz yorum yok</p>
               ) : (

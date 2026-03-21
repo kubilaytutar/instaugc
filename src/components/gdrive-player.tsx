@@ -19,8 +19,8 @@ export function GDrivePlayer({ fileId, isActive }: GDrivePlayerProps) {
             allowFullScreen
             loading="lazy"
           />
-          {/* Google Drive toolbar'ını (paylaş butonu) gizle */}
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-11 bg-black" />
+          {/* Google Drive toolbar'ını (paylaş / link butonu) gizle */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-14 bg-black" />
         </>
       ) : (
         <div className="flex h-full items-center justify-center">
